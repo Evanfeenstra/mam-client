@@ -1,28 +1,37 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styled from "styled-components"
+import Mam from './components/mam'
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+class A extends Component {
+  render(){
+    return (<App>
+      <Header>
+        IOTA Masked Messages
+      </Header>
+      <Mam />
+    </App>)
   }
 }
 
-export default App;
+export default A
+
+const App = styled.div`
+  display: flex;
+  position:relative;
+  flex-direction: column;
+  justify-content: start;
+  min-height: 100vh;
+  background: linear-gradient(145deg, #00646d 42%, #411cce);
+  background-size: cover;
+`
+const Header = styled.div`
+  height:75px;
+  border-bottom:1px solid white;
+  font-size:32px;
+  color:white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left:24px;
+  background: rgba(0,0,0,0.2);
+`
