@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components'
+import loader from './ajax-loader-small.gif'
 
 const B = (props) => <Button {...props}>
   {!props.active ? props.title :
-  <Spinner src={'/static/ajax-loader-small.gif'} size={props.size} />}
+  <Spinner src={loader} size={props.size} />}
 </Button>
 
 const Spinner = styled.img`

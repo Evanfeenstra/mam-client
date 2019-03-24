@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import styled from 'styled-components'
 import * as utils from './utils'
 import Input from './input'
+import loader from './ajax-loader-small.gif'
 
 class S extends Component {
 
@@ -75,7 +76,7 @@ class S extends Component {
             {mode.charAt(0).toUpperCase() + mode.substr(1)}
             <DropDownArrow active={open} />
           </Content> :
-          <Spinner src={'/static/ajax-loader-small.gif'} size={size} />}
+          <Spinner src={loader} size={size} />}
         </Button>
         {options && <MenuWrap height={menuWrapHeight} width={style.width}>
           <Menu height={menuWrapHeight} open={open} background={background}>

@@ -1,34 +1,6 @@
 const crypto = require('crypto')
 const EventEmitter = require('eventemitter3')
 
-export let API_URL = 'mam-broker.herokuapp.com'
-let protocol = 'https://'
-if (typeof window !== 'undefined'){
-  if(window.location.hostname==='localhost'){
-    API_URL = 'localhost:5000'
-    protocol = 'http://'
-  } 
-}
-
-export const API = async (url, body) => {
-  const options = {
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    },
-    method: "POST",
-    body: JSON.stringify(body)
-  }
-  try {
-    let response = await fetch(protocol + API_URL + url, options)
-    let responseJson = await response.json()
-    return responseJson
-  } catch (error) {
-    console.error(error)
-    throw error
-  }
-}
-
 export const validAmount = amount => amount.replace(/[^0-9]/g,'')
 
 export const validSeed = seed => seed.replace(/[^9A-Z]/g,'')
