@@ -1,5 +1,4 @@
-const crypto = require('crypto')
-const EventEmitter = require('eventemitter3')
+import EventEmitter from 'eventemitter3'
 
 export const validAmount = amount => amount.replace(/[^0-9]/g,'')
 
@@ -16,14 +15,5 @@ export const isClient =
   window.document &&
   window.document.createElement
 
-export const keyGen = length => {
-    var charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ9'
-    var values = crypto.randomBytes(length)
-    var result = new Array(length)
-    for (var i = 0; i < length; i++) {
-        result[i] = charset[values[i] % charset.length]
-    }
-    return result.join('')
-}
 
 export const EE = new EventEmitter() 
