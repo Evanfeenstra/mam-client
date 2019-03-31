@@ -28,7 +28,8 @@ class MAM extends Component {
   // https://potato.iotasalad.org:14265
 
   componentDidMount() {
-    this.init('https://nodes.thetangle.org:443')
+    const node = utils.nodes[Math.floor(Math.random() * utils.nodes.length)]
+    this.init(node)
     utils.EE.on('node-change',this.init)
   }
 
