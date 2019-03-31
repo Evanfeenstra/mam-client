@@ -4,6 +4,7 @@ import Send from './send'
 import Receive from './receive'
 import { asciiToTrytes, trytesToAscii } from '@iota/converter'
 import {usePowSrvIO} from '../powsrv/powsrv.js'
+import * as utils from './bits/utils'
 
 const Mam = window.dep.mam
 
@@ -27,8 +28,15 @@ class MAM extends Component {
   // https://potato.iotasalad.org:14265
 
   componentDidMount() {
+    this.init('https://nodes.thetangle.org:443')
+    utils.EE.on('node-change',this.init)
+  }
+
+  init = (e) => {
+    console.log(e)
     this.mamState = Mam.init({
-      provider:`https://potato.iotasalad.org:14265`,
+      //provider:`https://potato.iotasalad.org:14265`,
+      provider:e,
       attachToTangle: usePowSrvIO(5000, null)
     })
     console.log(this.mamState)
@@ -84,7 +92,7 @@ class MAM extends Component {
           rooot,
           mode,
           sideKey ? this.toTrytes(sideKey) : null,
-          (r) => messages.push(this.fromTrytes(r))
+          (r) => messages.unshift(this.fromTrytes(r))
       )
       if(resp && resp.nextRoot){
         console.log(`fetched ${messages.length} messages`)
@@ -114,6 +122,7 @@ const Body = styled.div`
   flex-direction: column;
   justify-content: start;
   align-items:center;
+  height:100%;
 `
 const Content = styled.div`
   display: flex;

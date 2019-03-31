@@ -83,7 +83,7 @@ class R extends Component {
         />
         <ChooseMode>
           <Select mode={mode} sideKey={sideKey}
-            style={{width:184}} listen background="#273674"
+            style={{width:184}} listen background="#0b4864"
             options={['public','private','restricted']}
             onSelect={(mode,sideKey)=>this.setState({mode,sideKey})}
           />
@@ -110,6 +110,7 @@ const Receive = styled.div`
   border:1px solid white;
   width:715px;
   background:rgba(0,0,0,0.2);
+  height:calc(100% - 350px);
 `
 const Toolbar = styled.div`
   display: flex;

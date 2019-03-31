@@ -10,6 +10,7 @@ class S extends Component {
     super()
     this.state={
       open:false,
+      mounted:false,
       extraComponent:null,
       extraInputText:''
     }
@@ -44,12 +45,26 @@ class S extends Component {
   }
 
   toggle = () => {
-    const {open, extraComponent} = this.state
-    const {mode} = this.props
-    this.setState({open:!open})
-    if(mode!=='restricted'){
+    const {open,locked} = this.state
+    if(locked) return
+    if(open){
+      this.close()
+    } else {
+      this.open()
+    }
+    if(this.props.mode!=='restricted'){
       this.setState({extraComponent:false})
     }
+  }
+
+  open = () => {
+    this.setState({mounted:true,locked:true})
+    setTimeout(()=>this.setState({open:true,locked:false}),15)
+  }
+
+  close = () => {
+    this.setState({open:false,locked:true})
+    setTimeout(()=>this.setState({mounted:false,locked:false}),165)
   }
 
   componentWillMount(){
@@ -62,8 +77,8 @@ class S extends Component {
   }
 
   render(){
-    const {open, extraComponent} = this.state
-    const {options, active, size, style, mode, background} = this.props
+    const {open, mounted, extraComponent} = this.state
+    const {options, active, size, style, mode, background, noBorder} = this.props
     let menuWrapHeight = options.length*35 + 2
     if(extraComponent && open){
       menuWrapHeight += 50
@@ -74,12 +89,12 @@ class S extends Component {
           onClick={this.toggle}>
           {!active ? <Content>
             {mode.charAt(0).toUpperCase() + mode.substr(1)}
-            <DropDownArrow active={open} />
+            <DropDownArrow active={open} noBorder={noBorder}/>
           </Content> :
           <Spinner src={loader} size={size} />}
         </Button>
-        {options && <MenuWrap height={menuWrapHeight} width={style.width}>
-          <Menu height={menuWrapHeight} open={open} background={background}>
+        {options && mounted && <MenuWrap height={menuWrapHeight} width={style.width}>
+          <Menu height={menuWrapHeight} open={open} background={background} noBorder={noBorder}>
             {options.map((o,i)=>{
               const extra = extraComponent===o && open
               const active = (mode===o && !extraComponent) || extra
@@ -120,16 +135,17 @@ const Content = styled.div`
   padding-left:6px;
 `
 const Button = styled.div`
-  background:rgba(0,0,0,0.1);
+  background:${p => p.noBorder?'transparent':'rgba(0,0,0,0.1)'};
   pointer-events: ${p=> p.disabled || p.active ? 'none' : 'auto'};
   color: ${p=> p.disabled ? 'grey' : 'white'};
-  border: 1px solid ${p=> p.disabled && !p.active ? 'grey' : 'white'};
+  border: 1px solid ${p=> p.noBorder?'transparent': p.disabled && !p.active ? 'grey' : 'white'};
   width:${p=> (p.style && p.style.width) + 'px' || 'auto'};
   margin: ${p=> (p.margin && p.style.margin) || '7px 0 4px 0'};
   display:flex;
   align-items:center;
   flex:1;
-  justify-content:center;
+  padding:${p => (p.style && p.style.padding) || 'none'};
+  justify-content:${p => (p.style && p.style.justifyContent) || 'center'};
   max-height: ${p=> p.size==='tiny' ? '16' : '32'}px;
   min-height: ${p=> p.size==='tiny' ? '16' : '32'}px;
   transition: all .15s ease-in-out;
@@ -151,7 +167,7 @@ const MenuWrap = styled.div`
   width:${p=> (p.width + 2 + 'px') || 'auto'};
 `
 const Menu = styled.div`
-  background:${p=>p.background || 'rgba(0,0,0,0.1)'};
+  background:${p=> p.background || 'rgba(0,0,0,0.1)'};
   border:1px solid white;
   transition: transform 0.07s;
   transform: translateY(${p => p.open ? 0: p.height*-1}px);
@@ -174,9 +190,9 @@ const MenuItemName = styled.div`
   padding-left:14px;
   height:35px;
 `
-const DropDownArrow = ({active}) => {
+const DropDownArrow = ({active,noBorder}) => {
   return <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
-    style={{marginLeft:4,marginTop:2}}>
+    style={{marginLeft:4,marginTop:2,marginRight:noBorder?12:0}}>
     <g style={{transform:`rotate(${active?'180':'0'}deg)`,transformOrigin:'center'}}>
       <path d="M7 10l5 5 5-5z"/>
       <path d="M0 0h24v24H0z" fill="none"/>
