@@ -17,7 +17,7 @@ class S extends Component {
 
   render () {
     const {updatingMode, message, sendingMessage} = this.state
-    const {mode, sideKey, sendMessage} = this.props
+    const {mode, sideKey, sendMessage, initialized} = this.props
     return <Send>
       <Content>
         <div>
@@ -30,7 +30,7 @@ class S extends Component {
             }}
           />
           <Button active={sendingMessage} title="Send Message" 
-            style={{margin:'11px 0'}} disabled={!message}
+            style={{margin:'11px 0'}} disabled={!message || !initialized}
             onClick={()=>{
               this.setState({sendingMessage:true})
               sendMessage(message)

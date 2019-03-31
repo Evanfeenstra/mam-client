@@ -24,4 +24,8 @@ export const nodes = [
   'https://papa.iota.family:14267',
 ]
 
+export function randomNode(){
+  return nodes[Math.floor(Math.random() * nodes.length)]
+}
+
 export const EE = new EventEmitter() 

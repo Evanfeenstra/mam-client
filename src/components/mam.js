@@ -13,44 +13,23 @@ class MAM extends Component {
   constructor(){
     super()
     this.state={
-      initialized:false,
       sideKey:'',
       mode:'public'
     }
     this.iota = null;
     this.mamState = null;
-  }
-
-  // https://testnet140.tangle.works
-  // https://field.deviota.com:443
-  // 181.143.154.229:14265
-  // https://iotanode.us:443
-  // https://potato.iotasalad.org:14265
-
-  componentDidMount() {
-    const node = utils.nodes[Math.floor(Math.random() * utils.nodes.length)]
-    this.init(node)
     utils.EE.on('node-change',this.init)
   }
 
-  init = (e) => {
-    console.log(e)
+  init = (node) => {
+    console.log(node)
     this.mamState = Mam.init({
       //provider:`https://potato.iotasalad.org:14265`,
-      provider:e,
+      provider:node,
       attachToTangle: usePowSrvIO(5000, null)
     })
     console.log(this.mamState)
-    this.setState({initialized:true})
   }
-
-  // componentWillMount(){
-  //   this.iota = new IOTA({ provider: `https://testnet140.tangle.works` })
-  //   usePowSrvIO(this.iota, 5000, null)
-  //   this.mamState = Mam.init(this.iota, seed)
-  //   console.log(this.mamState)
-  //   this.setState({initialized:true})
-  // }
 
   toTrytes = (a) => asciiToTrytes(JSON.stringify(a))
   fromTrytes = (a) => JSON.parse(trytesToAscii(a))
@@ -106,13 +85,14 @@ class MAM extends Component {
   }
 
   render () {
-    const {initialized, sideKey, mode} = this.state
+    const {sideKey, mode} = this.state
+    const {initialized} = this.props
     return <Body>
       <Content>
         <Send sideKey={sideKey} mode={mode} 
-          changeMode={this.changeMode} 
+          changeMode={this.changeMode} initialized={initialized}
           sendMessage={this.sendMessage} />
-        <Receive fetch={this.fetchMessages} />
+        <Receive fetch={this.fetchMessages} initialized={initialized} />
       </Content>
     </Body>
   }

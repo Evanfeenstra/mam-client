@@ -32,7 +32,7 @@ class S extends Component {
       this.setState({extraComponent:o})
     } else {
       this.props.onSelect(o)
-      this.setState({open:false,extraComponent:null})
+      this.close()
       if(!this.props.listen){
         this.setState({extraInputText:''})
       }
@@ -41,7 +41,7 @@ class S extends Component {
 
   ok = (o,sideKey) => {
     this.props.onSelect(o,sideKey)
-    this.setState({open:false,extraComponent:null})
+    this.close()
   }
 
   toggle = () => {
@@ -78,7 +78,7 @@ class S extends Component {
 
   render(){
     const {open, mounted, extraComponent} = this.state
-    const {options, active, size, style, mode, background, noBorder} = this.props
+    const {options, active, size, style, mode, background, noBorder, selected} = this.props
     let menuWrapHeight = options.length*35 + 2
     if(extraComponent && open){
       menuWrapHeight += 50
@@ -102,7 +102,10 @@ class S extends Component {
               return <MenuItem key={i} onClick={()=>this.select(o)}
                 height={35 + (extra ? 50 : 0)} active={active} index={i}> 
                 <div style={{width:'100%'}}>
-                  <MenuItemName>{o.charAt(0).toUpperCase()+o.substr(1)}</MenuItemName>
+                  <MenuItemName>
+                    <span>{o.charAt(0).toUpperCase()+o.substr(1)}</span>
+                    {selected===o && <Dot />}
+                  </MenuItemName>
                   {extra &&
                     <ExtraComponent
                       onChange={(e)=>this.setState({
@@ -121,6 +124,10 @@ class S extends Component {
     } else return <span />
   }
 }
+const Dot = () => (<svg viewBox="0 0 100 100" 
+  style={{fill:'white',height:7,width:7,marginRight:10}}>
+  <circle cx="50" cy="50" r="50"/>
+</svg>)
 const Select = styled.div`
   display:flex;
   flex-direction:column;
@@ -187,6 +194,7 @@ const MenuItem = styled.div`
 const MenuItemName = styled.div`
   display:flex;
   align-items:center;
+  justify-content:space-between;
   padding-left:14px;
   height:35px;
 `

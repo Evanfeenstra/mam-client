@@ -69,6 +69,7 @@ class R extends Component {
 
   render () {
     const {mode, fetching, nextRoot, messages, sideKey} = this.state
+    const {initialized} = this.props
     const rooot = nextRoot
     return <Receive>
       <Toolbar>
@@ -77,7 +78,8 @@ class R extends Component {
             onChange={(e)=>this.setState({nextRoot:e.target.value})} 
             width="400px" size="small" val={rooot} />
         </div>
-        <Button active={fetching} title="Fetch" disabled={!rooot}
+        <Button active={fetching} title="Fetch" 
+          disabled={!rooot || !initialized}
           style={{margin:'14px 0'}}
           onClick={this.fetch}
         />

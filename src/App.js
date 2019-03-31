@@ -3,22 +3,54 @@ import styled from "styled-components"
 import Mam from './components/mam'
 import Select from './components/bits/select'
 import * as utils from './components/bits/utils'
+import loader from './components/bits/ajax-loader-small.gif'
+import { composeAPI } from '@iota/core'
 
 class A extends Component {
+
+  state={node:'',initialized:false}
+
+  componentDidMount(){
+    const node = utils.randomNode()
+    this.changeNode(node)
+  }
+
+  changeNode = (node) => {
+    this.testNode(node)
+    utils.EE.emit('node-change',node)
+    this.setState({node})
+  }
+
+  testNode = async (provider) => {
+    const iota = composeAPI({provider})
+    try{
+      await iota.getNodeInfo()
+      this.setState({initialized:true})
+    }catch(e){
+      console.log(`Mam init error: ${e.message}`)
+      this.setState({initialized:false})
+      setTimeout(()=>this.changeNode(utils.randomNode()), 2187)
+    }
+  }
+
   render(){
+    const {initialized} = this.state
     return (<App>
       <Header>
         <span>IOTA Masked Messages</span>
         <Choose><Wrap>
-          <Select mode={'Node'}
-            noBorder background="#025057"
-            style={{width:286,justifyContent:'flex-end'}}  
-            options={utils.nodes} 
-            onSelect={(e)=>utils.EE.emit('node-change',e)} 
-          />
+          {initialized ? 
+            <Select mode={'Node'} 
+              selected={this.state.node}
+              noBorder background="#025057"
+              style={{width:286,justifyContent:'flex-end'}}  
+              options={utils.nodes} 
+              onSelect={this.changeNode} 
+            /> :
+          <Spinner src={loader} />}
         </Wrap></Choose>
       </Header>
-      <Mam />
+      <Mam initialized={initialized} />
     </App>)
   }
 }
@@ -54,6 +86,12 @@ const Choose = styled.div`
 `
 const Wrap = styled.div`
   position:absolute;
-  top:14px;
+  top:15px;
   right:20px;
+`
+const Spinner = styled.img`
+  height: 7px;
+  position: absolute;
+  top: 21px;
+  right: 21px;
 `
