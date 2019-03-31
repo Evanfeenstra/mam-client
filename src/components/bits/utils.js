@@ -16,12 +16,11 @@ export const isClient =
   window.document.createElement
 
 export const nodes = [
+  'https://dyn.tangle-nodes.com:443',
   'https://peanut.iotasalad.org:14265',
   'https://potato.iotasalad.org:14265',
   'https://node02.iotatoken.nl:443',
   'https://node06.iotatoken.nl:443',
-  'https://mama.iota.family:14267',
-  'https://papa.iota.family:14267',
 ]
 
 export function randomNode(){

@@ -11,7 +11,7 @@ class A extends Component {
   state={node:'',initialized:false}
 
   componentDidMount(){
-    const node = utils.randomNode()
+    const node = utils.nodes[0]
     this.changeNode(node)
   }
 

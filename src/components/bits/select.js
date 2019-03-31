@@ -103,7 +103,9 @@ class S extends Component {
                 height={35 + (extra ? 50 : 0)} active={active} index={i}> 
                 <div style={{width:'100%'}}>
                   <MenuItemName>
-                    <span>{o.charAt(0).toUpperCase()+o.substr(1)}</span>
+                    {noBorder ? <span>{o}</span> :
+                      <span>{o.charAt(0).toUpperCase()+o.substr(1)}</span>
+                    }
                     {selected===o && <Dot />}
                   </MenuItemName>
                   {extra &&

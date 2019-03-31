@@ -24,7 +24,6 @@ class MAM extends Component {
   init = (node) => {
     console.log(node)
     this.mamState = Mam.init({
-      //provider:`https://potato.iotasalad.org:14265`,
       provider:node,
       attachToTangle: usePowSrvIO(5000, null)
     })
