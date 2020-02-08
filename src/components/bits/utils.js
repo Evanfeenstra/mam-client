@@ -17,10 +17,14 @@ export const isClient =
 
 export const nodes = [
   'https://dyn.tangle-nodes.com:443',
-  'https://peanut.iotasalad.org:14265',
-  'https://potato.iotasalad.org:14265',
+  'https://iotanode.us:14267',
+  'https://pow.iota.community:443',
   'https://node02.iotatoken.nl:443',
   'https://node06.iotatoken.nl:443',
+  'https://we-did-it.org:14265',
+  'https://nodes.iota.cafe:443',
+  'https://ultranode.iotatoken.nl:443',
+  'https://papa.iota.family:14267'
 ]
 
 export function randomNode(){

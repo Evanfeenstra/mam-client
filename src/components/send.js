@@ -31,14 +31,12 @@ class S extends Component {
           />
           <Button active={sendingMessage} title="Send Message" 
             style={{margin:'11px 0'}} disabled={!message || !initialized}
-            onClick={()=>{
+            onClick={async ()=>{
               this.setState({sendingMessage:true})
-              sendMessage(message)
-              .then((rooot)=>{
-                console.log(rooot)
-                this.setState({message:'',sendingMessage:false})
-                utils.EE.emit('root',rooot)
-              })
+              const rooot = await sendMessage(message)
+              console.log(rooot)
+              this.setState({message:'',sendingMessage:false})
+              utils.EE.emit('root',rooot)
             }}
           />
         </div>

@@ -1,9 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components'
 import Button from './bits/button'
 import Select from './bits/select'
 import Input from './bits/input'
-import {EE} from './bits/utils'
+import { EE } from './bits/utils'
+import { asciiToTrytes, trytesToAscii } from '@iota/converter'
 
 //LENGTH OF MAM MESSAGE
 // 8687 is MAX LENGTH OF MESSAGE
@@ -12,89 +13,98 @@ import {EE} from './bits/utils'
 
 class R extends Component {
 
-  constructor(){
+  constructor() {
     super()
-    this.state={
-      mode:'public',
-      nextRoot:'',
-      fetching:false,
-      messages:[]
+    this.state = {
+      mode: 'public',
+      nextRoot: '',
+      fetching: false,
+      messages: []
     }
   }
 
-  componentDidMount(){
-    setTimeout(()=>this.preload(),500)
+  componentDidMount() {
+    setTimeout(() => this.preload(), 500)
   }
 
-  preload(){
-    if (typeof window !== 'undefined'){
+  preload() {
+    if (typeof window !== 'undefined') {
       let params = (new URL(document.location)).searchParams;
       const nextRoot = params.get('root')
-      const sideKey = params.get('sideKey')
+      let sideKey = params.get('sideKey')
       const mode = params.get('mode')
+      const sideKeyTrytes = params.get('sideKeyTrytes')
+      if (sideKeyTrytes) {
+        sideKey = this.fromTrytes(sideKeyTrytes)
+      }
       //console.log(nextRoot,sideKey,mode)
-      if(nextRoot && sideKey && mode) {
-        this.setState({mode, sideKey, nextRoot}, () => {
+      if (nextRoot && sideKey && mode) {
+        this.setState({ mode, sideKey, nextRoot }, () => {
           this.fetch()
         })
       }
     }
-    EE.on('root',(rooot)=>{
-      this.setState({nextRoot:rooot})
+    EE.on('root', (rooot) => {
+      this.setState({ nextRoot: rooot })
     })
   }
 
-  fetch = () => {
-    this.setState({fetching:true})
-    this.props.fetch(this.state.nextRoot, this.state.sideKey, this.state.mode)
-    .then((r)=>{
+  toTrytes = (a) => asciiToTrytes(JSON.stringify(a))
+  fromTrytes = (a) => JSON.parse(trytesToAscii(a))
+
+  fetch = async () => {
+    this.setState({ fetching: true })
+    const { nextRoot, sideKey, mode } = this.state
+    try {
+      const r = await this.props.fetch(
+        nextRoot, this.toTrytes(sideKey), mode
+      )
       console.log(r)
-      if(r && r.messages){
+      if (r && r.messages) {
         const newMessages = r.messages.map((m) => {
           let j = m
           try {
             j = JSON.parse(m)
-          } catch(e) {}
+          } catch (e) { }
           return j
         })
         const messages = newMessages.concat(this.state.messages)
-        this.setState({messages})
+        this.setState({ messages })
       }
-      this.setState({fetching:false})
-    })
-    .catch((e)=>{
-      this.setState({fetching:false})
-    })
+      this.setState({ fetching: false })
+    } catch (e) {
+      this.setState({ fetching: false })
+    }
   }
 
-  render () {
-    const {mode, fetching, nextRoot, messages, sideKey} = this.state
-    const {initialized} = this.props
+  render() {
+    const { mode, fetching, nextRoot, messages, sideKey } = this.state
+    const { initialized } = this.props
     const rooot = nextRoot
     return <Receive>
       <Toolbar>
-        <div style={{margin:'7px 12px'}}>
-          <Input type="text" label="Root Address" value={rooot} 
-            onChange={(e)=>this.setState({nextRoot:e.target.value})} 
+        <div style={{ margin: '7px 12px' }}>
+          <Input type="text" label="Root Address" value={rooot}
+            onChange={(e) => this.setState({ nextRoot: e.target.value })}
             width="400px" size="small" val={rooot} />
         </div>
-        <Button active={fetching} title="Fetch" 
+        <Button active={fetching} title="Fetch"
           disabled={!rooot || !initialized}
-          style={{margin:'14px 0'}}
+          style={{ margin: '14px 0' }}
           onClick={this.fetch}
         />
         <ChooseMode>
           <Select mode={mode} sideKey={sideKey}
-            style={{width:184}} listen background="#0b4864"
-            options={['public','private','restricted']}
-            onSelect={(mode,sideKey)=>this.setState({mode,sideKey})}
+            style={{ width: 184 }} listen background="#0b4864"
+            options={['public', 'private', 'restricted']}
+            onSelect={(mode, sideKey) => this.setState({ mode, sideKey })}
           />
         </ChooseMode>
       </Toolbar>
       <Messages>
-        {messages.map((m,i)=>{
+        {messages.map((m, i) => {
           return (<Message key={i}>
-            {JSON.stringify(m,null,2)}
+            {JSON.stringify(m, null, 2)}
           </Message>)
         })}
       </Messages>

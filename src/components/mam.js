@@ -3,10 +3,8 @@ import styled from 'styled-components'
 import Send from './send'
 import Receive from './receive'
 import { asciiToTrytes, trytesToAscii } from '@iota/converter'
-import {usePowSrvIO} from '../powsrv/powsrv.js'
 import * as utils from './bits/utils'
-
-const Mam = window.dep.mam
+import * as Mam from '@iota/mam';
 
 class MAM extends Component {
 
@@ -25,7 +23,6 @@ class MAM extends Component {
     console.log(node)
     this.mamState = Mam.init({
       provider:node,
-      attachToTangle: usePowSrvIO(5000, null)
     })
     console.log(this.mamState)
   }
@@ -70,7 +67,7 @@ class MAM extends Component {
       var resp = await Mam.fetch(
           rooot,
           mode,
-          sideKey ? this.toTrytes(sideKey) : null,
+          sideKey ? sideKey : null,
           (r) => messages.unshift(this.fromTrytes(r))
       )
       if(resp && resp.nextRoot){
