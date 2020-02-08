@@ -39,7 +39,7 @@ class MAM extends Component {
       this.mamState = Mam.changeMode(
         this.mamState,
         'restricted',
-        this.toTrytes(sideKey)
+        sideKey
       )
     } else {
       console.error('Wrong mode')
@@ -60,15 +60,17 @@ class MAM extends Component {
   }
 
   fetchMessages = async (rooot, sideKey, mode) => {
-    //console.log(rooot, sideKey, mode)
-    
+    console.log(rooot, sideKey, mode)
     if(rooot) {
       const messages = []
       var resp = await Mam.fetch(
           rooot,
           mode,
-          sideKey ? sideKey : null,
-          (r) => messages.unshift(this.fromTrytes(r))
+          sideKey || null,
+          (r) => {
+            console.log(r)
+            messages.unshift(this.fromTrytes(r))
+          }
       )
       if(resp && resp.nextRoot){
         console.log(`fetched ${messages.length} messages`)

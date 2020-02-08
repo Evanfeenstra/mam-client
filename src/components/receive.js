@@ -35,10 +35,10 @@ class R extends Component {
       const mode = params.get('mode')
       const sideKeyTrytes = params.get('sideKeyTrytes')
       if (sideKeyTrytes) {
-        sideKey = this.fromTrytes(sideKeyTrytes)
+        sideKey = trytesToAscii(sideKeyTrytes)
       }
       //console.log(nextRoot,sideKey,mode)
-      if (nextRoot && sideKey && mode) {
+      if (nextRoot && mode && sideKey) {
         this.setState({ mode, sideKey, nextRoot }, () => {
           this.fetch()
         })
@@ -49,16 +49,11 @@ class R extends Component {
     })
   }
 
-  toTrytes = (a) => asciiToTrytes(JSON.stringify(a))
-  fromTrytes = (a) => JSON.parse(trytesToAscii(a))
-
   fetch = async () => {
     this.setState({ fetching: true })
     const { nextRoot, sideKey, mode } = this.state
     try {
-      const r = await this.props.fetch(
-        nextRoot, this.toTrytes(sideKey), mode
-      )
+      const r = await this.props.fetch(nextRoot, sideKey, mode)
       console.log(r)
       if (r && r.messages) {
         const newMessages = r.messages.map((m) => {
@@ -150,3 +145,10 @@ const Message = styled.pre`
 `
 
 export default R
+
+
+/*
+
+http://localhost:3000/?mode=restricted&root=TJGIBOJUARZ9FO99ZZWDBZCPWJSCQAHXKYVKHNQJDGVHVJGWJQ9KVWRDO9VNITSDCFGAQSTZZ9GHAROBO&sideKey=MCMXCKQ9YIODKXBSUWV9NGHFURHUBBMFJFANUQHIL9
+
+*/
