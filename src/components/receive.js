@@ -4,7 +4,7 @@ import Button from './bits/button'
 import Select from './bits/select'
 import Input from './bits/input'
 import { EE } from './bits/utils'
-import { asciiToTrytes, trytesToAscii } from '@iota/converter'
+import { trytesToAscii } from '@iota/converter'
 
 //LENGTH OF MAM MESSAGE
 // 8687 is MAX LENGTH OF MESSAGE
@@ -21,6 +21,8 @@ class R extends Component {
       fetching: false,
       messages: []
     }
+    this.helixURL='https://helix.h2h.name'
+    // this.helixURL='http://localhost:5010'
   }
 
   componentDidMount() {
@@ -36,6 +38,10 @@ class R extends Component {
       const sideKeyTrytes = params.get('sideKeyTrytes')
       if (sideKeyTrytes) {
         sideKey = trytesToAscii(sideKeyTrytes)
+      }
+      const helixKey = params.get('helixKey')
+      if(helixKey) {
+        return this.fetchHelix(helixKey)
       }
       //console.log(nextRoot,sideKey,mode)
       if (nextRoot && mode && sideKey) {
@@ -72,6 +78,20 @@ class R extends Component {
     }
   }
 
+  fetchHelix = async(helixKey) => {
+    this.setState({ fetching:true })
+    try{
+      console.log("GET STREAM")
+      const r = await fetch(`${this.helixURL}/stream?jwt=${helixKey}`)
+      const stream = await r.json()
+      console.log(stream)
+      this.setState({nextRoot: stream.firstRoot})
+      const r2 = await fetch(`${this.helixURL}/messages?jwt=${helixKey}`)
+      const messages = await r2.json()
+      this.setState({messages, fetching:false})
+    } catch(e) {}
+  }
+
   render() {
     const { mode, fetching, nextRoot, messages, sideKey } = this.state
     const { initialized } = this.props
@@ -79,7 +99,7 @@ class R extends Component {
     return <Receive>
       <Toolbar>
         <div style={{ margin: '7px 12px' }}>
-          <Input type="text" label="Root Address" value={rooot}
+          <Input type="text" label="Root" value={rooot}
             onChange={(e) => this.setState({ nextRoot: e.target.value })}
             width="400px" size="small" val={rooot} />
         </div>
