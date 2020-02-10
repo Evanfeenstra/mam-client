@@ -39,9 +39,9 @@ class R extends Component {
       if (sideKeyTrytes) {
         sideKey = trytesToAscii(sideKeyTrytes)
       }
-      const helixKey = params.get('helixKey')
-      if(helixKey) {
-        return this.fetchHelix(helixKey)
+      const helixToken = params.get('helixToken')
+      if(helixToken) {
+        return this.fetchHelix(helixToken)
       }
       //console.log(nextRoot,sideKey,mode)
       if (nextRoot && mode && sideKey) {
@@ -78,15 +78,15 @@ class R extends Component {
     }
   }
 
-  fetchHelix = async(helixKey) => {
+  fetchHelix = async(helixToken) => {
     this.setState({ fetching:true })
     try{
       console.log("GET STREAM")
-      const r = await fetch(`${this.helixURL}/stream?jwt=${helixKey}`)
+      const r = await fetch(`${this.helixURL}/stream?jwt=${helixToken}`)
       const stream = await r.json()
       console.log(stream)
       this.setState({nextRoot: stream.firstRoot})
-      const r2 = await fetch(`${this.helixURL}/messages?jwt=${helixKey}`)
+      const r2 = await fetch(`${this.helixURL}/messages?jwt=${helixToken}`)
       const messages = await r2.json()
       this.setState({messages, fetching:false})
     } catch(e) {}
