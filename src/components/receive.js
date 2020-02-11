@@ -89,7 +89,9 @@ class R extends Component {
       const r2 = await fetch(`${this.helixURL}/messages?jwt=${helixToken}`)
       const messages = await r2.json()
       this.setState({messages, fetching:false})
-    } catch(e) {}
+    } catch(e) {
+      this.setState({fetching:false})
+    }
   }
 
   render() {
